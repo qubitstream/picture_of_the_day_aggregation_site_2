@@ -1,0 +1,44 @@
+# Python bytecode:
+*.py[co]
+# Packaging files:
+*.egg*
+# Sphinx docs:
+build
+# SQLite3 database files:
+*.db
+*.sqlite3
+# Logs:
+*.log
+# Eclipse
+.project
+.pydevproject
+.settings
+# PyCharm
+.idea
+# Linux Editors
+*~
+\#*\#
+/.emacs.desktop
+/.emacs.desktop.lock
+.elc
+auto-save-list
+tramp
+.\#*
+*.swp
+*.swo
+*.rdb
+# Mac
+.DS_Store
+._*
+# Windows
+Thumbs.db
+Desktop.ini
+media
+__pycache__
+gopotd_ii.bat
+env_variables.txt
+*.css.map
+logs/*.log
+
+_misc
+*.sync-conflict-*
