@@ -37,7 +37,7 @@ Currently, there is no changelog; the best option at the moment is to read the c
 
 ## License
 
-At this moment, the code is not under a specific license, which means you are not allowed to use it
+At this moment, the code is not under a specific license, which means you are **not allowed to use it
 in any way without written permission to do so.
 
 The JavaScript libraries used are under their respective licenses.

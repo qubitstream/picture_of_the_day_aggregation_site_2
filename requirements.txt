@@ -5,7 +5,7 @@ Django==1.11rc1
 django-debug-toolbar==1.7
 django-extensions==1.7.7
 djangorestframework==3.6.2
-easy-thumbnails==2.3
+-e git+https://github.com/SmileyChris/easy-thumbnails.git#egg=easy-thumbnails
 ipython==5.3.0
 ipython-genutils==0.2.0
 lxml==3.7.3
@@ -23,6 +23,7 @@ simplegeneric==0.8.1
 six==1.10.0
 sqlparse==0.2.3
 traitlets==4.3.2
+Unidecode==0.4.20
 wcwidth==0.1.7
 Werkzeug==0.12.1
 win-unicode-console==0.5

@@ -5,6 +5,8 @@ from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from django.core.urlresolvers import reverse
 from django.utils.text import slugify
+from django.conf import settings
+from easy_thumbnails.templatetags.thumbnail import thumbnail_url
 import logging
 logger = logging.getLogger(__name__)
 
@@ -38,6 +40,12 @@ class POTDQuerySet(models.QuerySet):
     def later_than(self, cmp_date, max_items=1):
         return self.order_by('potd_at').filter(potd_at__gt=cmp_date)[:max_items]
 
+    def earlier_than_that(self, that_potd, max_items=1):
+        return self.earlier_than(that_potd.potd_at, max_items=max_items)
+
+    def later_than_that(self, that_potd, max_items=1):
+        return self.later_than(that_potd.potd_at, max_items=max_items)
+
 
 class POTD(models.Model):
     PICTURE_SOURCE_UNSPECIFIED = 'unspecified'
@@ -66,8 +74,7 @@ class POTD(models.Model):
 
     slug = models.SlugField(
         max_length=100,
-        allow_unicode=True,
-        unique_for_date='potd_at',
+        allow_unicode=True
     )
 
     created_at = models.DateTimeField(
@@ -79,12 +86,28 @@ class POTD(models.Model):
         verbose_name=_('last update'),
     )
 
-    retrieved_from_source_url_at = models.DateTimeField(
-        verbose_name=_('datetime retrieved from source URL'),
+    retrieved_from_source_at = models.DateTimeField(
+        verbose_name=_('datetime retrieved from source'),
+        auto_now_add=True,
     )
 
     potd_at = models.DateField(
-        verbose_name=_('date on which this picture was "picture of the day"'),
+        verbose_name=_('date featured as picture of the day'),
+        db_index=True
+    )
+
+    source_url = models.URLField(
+        verbose_name=_('source url'),
+        help_text=_('URL for the image page, e.g. the wikimedia commons page'),
+        editable=False,
+        blank=True
+    )
+
+    detail_url = models.URLField(
+        verbose_name=_('detail url'),
+        help_text=_('URL for additional information, e.g. a wikipedia article corresponding to the image'),
+        editable=False,
+        blank=True,
     )
 
     description = models.TextField(
@@ -119,7 +142,14 @@ class POTD(models.Model):
 
     @property
     def aspect_ratio(self):
-        return '{0.numerator}:{0.denominator}'.format(Fraction(self.width, self.height)) if self.height else _('N/A')
+        return '{0.numerator}/{0.denominator}'.format(Fraction(self.width, self.height)) if self.height else _('N/A')
+
+    def thumbnail_full_url(self, thumb_preset='potd400x400'):
+        return settings.SITE_DOMAIN + thumbnail_url(self.image, thumb_preset)
+
+    def thumbnail_full_urls(self):
+        """a dict of all thumbnails"""
+        return {key: self.thumbnail_full_url(key) for key in settings.THUMBNAIL_ALIASES[''].keys()}
 
     objects = POTDQuerySet.as_manager()
 
@@ -137,6 +167,9 @@ class POTD(models.Model):
                 'source_type': self.source_type,
                 'slug': self.slug,
             })
+
+    def get_full_url(self):
+        return settings.SITE_DOMAIN + self.get_absolute_url()
 
     def __str__(self):
         return '{0} | {1.year:0>4}-{1.month:0>2}-{1.day:0>2}: {2.title}'.format(

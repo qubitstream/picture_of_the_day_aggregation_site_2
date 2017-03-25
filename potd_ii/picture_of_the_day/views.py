@@ -4,9 +4,13 @@ from django.http import HttpResponsePermanentRedirect, HttpResponseRedirect, Htt
 from django.views.decorators.cache import cache_page
 from django.conf import settings
 from django.template import defaultfilters
+from rest_framework import viewsets
 from .models import POTD
+from .serializers import POTDSerializer
 import logging
 logger = logging.getLogger(__name__)
+
+
 
 
 @cache_page(settings.CACHE_TIME_POTD_DETAIL)
@@ -21,3 +25,8 @@ def potd_detail(request, year, month, day, source_type=POTD.PICTURE_SOURCE_WIKIP
         'potd': potd,
         'month_human_readable': defaultfilters.date(potd_date, 'F'),
     })
+
+
+class POTDViewSet(viewsets.ReadOnlyModelViewSet):
+    queryset = POTD.objects.published()
+    serializer_class = POTDSerializer

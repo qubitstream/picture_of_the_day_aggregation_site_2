@@ -30,12 +30,12 @@ git revision: $GIT_REVISION
 <body>
 
 </body>
-{% block body_main_content %}
 	<div class="container">
+	{% block body_main_content %}
 		<h1>{{ NAME_OF_SITE_LONG }}</h1>
 		<p>Hello, world!</p>
 		{% lorem 3 p random %}
+	{% endblock %}
 	</div>
-{% endblock %}
 </html>
 <!-- S={{ ACTIVE_SETTING }}, D={{ DEBUG }} -->

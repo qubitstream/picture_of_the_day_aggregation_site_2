@@ -58,6 +58,10 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django_extensions',
+    'easy_thumbnails',
+    'rest_framework',
+    'core',
+    'picture_of_the_day',
 ]
 
 MIDDLEWARE = [
@@ -177,6 +181,12 @@ LOGGING = {
             'filename': os.path.join(BASE_DIR, '..', 'logs', 'potd_app.log'),
             'formatter': 'verbose'
         },
+        'management_file': {
+            'level': 'DEBUG',
+            'class': 'logging.FileHandler',
+            'filename': os.path.join(BASE_DIR, '..', 'logs', 'potd_management.log'),
+            'formatter': 'verbose'
+        },
         'null': {
             'level': 'DEBUG',
             'class': 'logging.NullHandler',
@@ -196,6 +206,11 @@ LOGGING = {
     'loggers': {
         'django': {
             'handlers': ['django_file', 'console'],
+            'propagate': True,
+            'level': 'INFO',
+        },
+        'management': {
+            'handlers': ['management_file', 'console'],
             'propagate': True,
             'level': 'INFO',
         },

@@ -1,0 +1,12 @@
+{% extends "base.html" %}{% load i18n %}{% load static %}{% load thumbnail %}
+
+{% block head_title %}
+	{{ potd.title }} - {% trans "from" %} {{ potd.get_source_type_display }}, {{ potd.potd_at }} -
+	{{ NAME_OF_SITE_LONG }}
+{% endblock %}
+
+{% block body_main_content %}
+	<h1>{{ potd.title }}</h1>
+	<p>{{ potd.description }}</p>
+	<p><img style="width: 100%" src="{{ potd.image|thumbnail_url:"potd1200" }}" alt="{{ potd.title }}" title="{{ potd.description }}"></p>
+{% endblock %}
