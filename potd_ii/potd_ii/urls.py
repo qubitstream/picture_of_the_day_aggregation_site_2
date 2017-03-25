@@ -21,3 +21,7 @@ urlpatterns = [
 
 if 'local' in settings.ACTIVE_SETTING:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
+    from django.templatetags.static import static as static_templatetag
+    favicon_view = generic.RedirectView.as_view(url=static_templatetag('favicon.ico'), permanent=True)
+    urlpatterns += [url(r'^favicon\.ico$', favicon_view)]
