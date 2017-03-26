@@ -110,6 +110,20 @@ class POTD(models.Model):
         blank=True,
     )
 
+    image_url = models.URLField(
+        verbose_name=_('image url'),
+        help_text=_('URL for the direct link to the image'),
+        editable=False,
+        blank=True,
+    )
+
+    image_thumbnail_url = models.URLField(
+        verbose_name=_('thumbnail image url'),
+        help_text=_('URL for the direct link to a smaller image, preferable and sufficient for importing'),
+        editable=False,
+        blank=True,
+    )
+
     description = models.TextField(
         verbose_name=_('description of the picture'),
     )
@@ -128,7 +142,7 @@ class POTD(models.Model):
 
     image = models.ImageField(
         upload_to=image_upload_path,
-        blank=False,
+        blank=True,
         width_field='width',
         height_field='height',
         verbose_name=_('picture of the day image file')

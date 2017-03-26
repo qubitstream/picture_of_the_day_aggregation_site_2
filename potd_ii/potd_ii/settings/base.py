@@ -212,7 +212,7 @@ LOGGING = {
         'management': {
             'handlers': ['management_file', 'console'],
             'propagate': True,
-            'level': 'INFO',
+            'level': 'DEBUG',
         },
     }
 }
@@ -247,8 +247,6 @@ THUMBNAIL_ALIASES_TO_PREGENERATE = ['potd400x400', 'potd1200']
 
 # The maximum length of the longest side of the image
 THUMBNAIL_MAX_SCRAPE_SIZE = int(get_env_setting_or_default('THUMBNAIL_MAX_SCRAPE_SIZE', 2400))
-
-EXTRACTOR_FAILURES_LOGFILE = os.path.join(BASE_DIR, '..', 'logs', 'extractor_failures.log')
 
 NAME_OF_SITE_LONG = 'Picture of the Day'
 NAME_OF_SITE_SHORT = 'PotD'
