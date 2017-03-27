@@ -5,6 +5,7 @@ from datetime import date
 from lxml import html
 from lxml.etree import tostring
 from django.utils.timezone import now
+from html2text import HTML2Text
 from . import BaseExtractor
 from ..models import POTD
 logger = logging.getLogger('management')
@@ -37,44 +38,45 @@ class WikipediaEnExtractor(BaseExtractor):
             logger.debug('extractor wikipedia_en: creating new potd for {}'.format(potd_kwargs))
             potd = POTD(**potd_kwargs)
 
-        source_potd_url = WikipediaEnExtractor.WIKIPEDIA_POTD_URL.format(year=year, month=month, day=day)
-        logger.debug('extractor wikipedia_en: source potd url: {}'.format(source_potd_url))
-        response = requests.get(source_potd_url)
+            source_potd_url = WikipediaEnExtractor.WIKIPEDIA_POTD_URL.format(year=year, month=month, day=day)
+            logger.debug('extractor wikipedia_en: source potd url: {}'.format(source_potd_url))
+            response = requests.get(source_potd_url)
 
-        if response.ok:
-            tree = html.fromstring(response.content)
-            image_filename = tree.xpath('//div[@id="mw-content-text"][1]/table//img[1]/..')[0].attrib['href'].split(':')[1]
-            potd.title = tree.xpath('//div[@id="mw-content-text"][1]/table//tr/td/p//b/a')[0].attrib['title']
-            potd.source_url = WikipediaEnExtractor.WIKIPEDIA_BASE_URL + tree.xpath('//div[@id="mw-content-text"][1]/table//tr/td/p//b/a')[0].attrib['href']
-            potd.description = tree.xpath('//div[@id="mw-content-text"][1]/table//tr/td/p//b/a/ancestor::p')[0].text_content()
-        else:
-            logger.error('extractor wikipedia_en: http status code {} for url: {}'.format(
-                response.status_code, source_potd_url))
-            response.raise_for_status()
+            if response.ok:
+                tree = html.fromstring(response.content)
+                image_filename = tree.xpath('//div[@id="mw-content-text"][1]/table//img[1]/..')[0].attrib['href'].split(':')[1]
+                potd.title = tree.xpath('//div[@id="mw-content-text"][1]/table//tr/td/p//b/a')[0].attrib['title']
+                potd.source_url = WikipediaEnExtractor.WIKIPEDIA_BASE_URL + tree.xpath('//div[@id="mw-content-text"][1]/table//tr/td/p//b/a')[0].attrib['href']
+                potd.description = WikipediaEnExtractor._process_description(
+                    tree.xpath('//div[@id="mw-content-text"][1]/table//tr/td/p//b/a/ancestor::p')[0])
+            else:
+                logger.error('extractor wikipedia_en: http status code {} for url: {}'.format(
+                    response.status_code, source_potd_url))
+                response.raise_for_status()
 
-        # Wikimedia Commons
-        source_image_api_url = WikipediaEnExtractor.WIKIMEDIA_COMMONS_URL.format(image_filename=image_filename)
-        if max_thumb_size:
-            source_image_api_url += r'&thumbwidth={0}&thumbheight={0}'.format(max_thumb_size)
-        logger.debug('extractor wikipedia_en: source image api url: {}'.format(source_image_api_url))
-        response = requests.get(source_image_api_url)
+            # Wikimedia Commons
+            source_image_api_url = WikipediaEnExtractor.WIKIMEDIA_COMMONS_URL.format(image_filename=image_filename)
+            if max_thumb_size:
+                source_image_api_url += r'&thumbwidth={0}&thumbheight={0}'.format(max_thumb_size)
+            logger.debug('extractor wikipedia_en: source image api url: {}'.format(source_image_api_url))
+            response = requests.get(source_image_api_url)
 
-        if response.ok:
-            tree = html.fromstring(response.content)
-            potd.raw_scraping_data_image = tostring(tree, encoding='unicode', pretty_print=True)
-            potd.image_url = tree.xpath('//urls/file')[0].text
-            potd.image_thumbnail_url = None
-            try:
-                potd.image_thumbnail_url = tree.xpath('//urls/thumbnail')[0].text
-            except (KeyError, IndexError):
-                logger.debug('extractor wikipedia_en: image thumbnail url not found: {}'.format(source_image_api_url))
-                pass
-        else:
-            logger.error('extractor wikipedia_en: wikimedia commons http status code {} for url: {}'.format(
-                response.status_code, source_image_api_url))
-            response.raise_for_status()
+            if response.ok:
+                tree = html.fromstring(response.content)
+                potd.raw_scraping_data_image = tostring(tree, encoding='unicode', pretty_print=True)
+                potd.image_url = tree.xpath('//urls/file')[0].text
+                potd.image_thumbnail_url = None
+                try:
+                    potd.image_thumbnail_url = tree.xpath('//urls/thumbnail')[0].text
+                except (KeyError, IndexError):
+                    logger.debug('extractor wikipedia_en: image thumbnail url not found: {}'.format(
+                        source_image_api_url))
+            else:
+                logger.error('extractor wikipedia_en: wikimedia commons http status code {} for url: {}'.format(
+                    response.status_code, source_image_api_url))
+                response.raise_for_status()
 
-        potd.retrieved_from_source_at = now()
+            potd.retrieved_from_source_at = now()
 
         logger.info('extractor wikipedia_en: potd_data okay for {}-{}-{} "{}"'.format(
             year, month, day, potd.title))
@@ -82,3 +84,16 @@ class WikipediaEnExtractor(BaseExtractor):
         potd.save()
 
         return potd
+
+    @staticmethod
+    def _process_description(etree_node):
+        h = HTML2Text()
+        h.ignore_links = True
+        markdown = h.handle(tostring(etree_node.xpath(
+            '//div[@id="mw-content-text"][1]/table//tr/td/p//b/a/ancestor::p')[0], encoding='unicode'))
+        # replace single linebreaks with space + leave multilinebreaks, works, but not pretty
+        markdown = re.sub(r'\r', '', markdown).strip()
+        markdown = re.sub(r'\n{2,}', r'\r', markdown)
+        markdown = re.sub(r'\n', ' ', markdown)
+        markdown = re.sub(r'\r+', r'\n\n', markdown).strip()
+        return markdown

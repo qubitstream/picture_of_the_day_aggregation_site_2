@@ -6,7 +6,12 @@
 {% endblock %}
 
 {% block body_main_content %}
+	<script src="{% static "js/marked.min.js" %}"></script>
 	<h1>{{ potd.title }}</h1>
-	<p>{{ potd.description }}</p>
+	<p id="marked">{{ potd.description }}</p>
 	<p><img style="width: 100%" src="{{ potd.image|thumbnail_url:"potd1200" }}" alt="{{ potd.title }}" title="{{ potd.description }}"></p>
+	<script>
+		var elem = document.getElementById("marked");
+    	elem.innerHTML = marked(elem.innerText);
+  	</script>
 {% endblock %}

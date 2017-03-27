@@ -4,11 +4,17 @@ Picture of the Day
 ## About
 
 
-This is the source code for an aggregation site for various "Picture of the day" sites, written in Django. The current implementation is limited to the English Wikipedia.
+This is the source code for an aggregation site for various "Picture of the day" sites, written in [Django](https://www.djangoproject.com/).
+
+_Picture of the day_ site currently supported:
+
+* [Wikipedia (english)](https://en.wikipedia.org/)
 
 ## Configuration
 
-Create a virtualenv and install the requirements listed in `requirements.txt`. The code has been tested with Python 3.4 in mind.
+Create a virtualenv and install the requirements listed in `requirements.txt`. The code has been tested with **Python 3.4** in mind.
+See `DEVNOTES.md` for additional information.
+
 
 ### Environment variables
 
@@ -25,7 +31,9 @@ If you wish to use PostgreSQL:
 * `POTD_II_POSTGRESQL_DB_NAME`: PostgreSQL DB name
 * `POTD_II_POSTGRESQL_DB_USER`: PostgreSQL user
 * `POTD_II_POSTGRESQL_DB_PW`: PostgreSQL password
+
 ---
+
 * `POTD_II_SITE_DOMAIN`: The domain name, default: `http://www.potd.remote` (change your `hosts` file if needed)
 * `THUMBNAIL_MAX_SCRAPE_SIZE`: maximum pixel width or height for Wikimedia image downloads, default: `2400`
 
@@ -37,19 +45,15 @@ Currently, there is no changelog; the best option at the moment is to read the c
 
 ## License
 
-At this moment, the code is not under a specific license, which means you are **not allowed to use it
+At this moment, the code is not under a specific license, which means you are **not** allowed to use it
 in any way without written permission to do so.
 
-The JavaScript libraries used are under their respective licenses.
+The Python, JavaScript and CSS libraries used are under their respective licenses.
 
 ## Acknowledgements
 
 ### Authors
 
-- Christoph Haunschmidt: Project lead
+Christoph Haunschmidt: Project lead
 
-### Credits
-
-#### Assets
-
-- [Font Awesome - The iconic font and CSS toolkit](https://fortawesome.github.io/Font-Awesome/icons/)
+See `DEVNOTES.md` for the libraries used.
