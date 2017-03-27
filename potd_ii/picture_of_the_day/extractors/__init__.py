@@ -59,7 +59,6 @@ def extract_range(start_year=None, start_month=None, start_day=None,
     If no end numbers are given, the start date's numbers are filled in.
     
     Returns tuple: days_processed, potds_extracted, images_downloaded
-    
     """
     start_date = date(
         year=start_year or now().year,
