@@ -17,25 +17,39 @@ git revision: $GIT_REVISION
 
 	<link rel="icon" href="{% static "favicon.ico" %}" type="image/x-icon">
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ" crossorigin="anonymous">
-	<script src="https://code.jquery.com/jquery-3.1.1.slim.min.js" integrity="sha384-A7FZj7v+d/sdmMqp/nOQwliLvUsJfDHW+k9Omg/a/EheAdgtzNs3hpfag6Ed950n" crossorigin="anonymous"></script>
+	<script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.0/js/tether.min.js" integrity="sha384-DztdAPBWPRXSA/3eYEEUWrWCy7G5KFbe8fFjk5JAIxUYHKkDx6Qin1DkWx51bBrb" crossorigin="anonymous"></script>
 	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/js/bootstrap.min.js" integrity="sha384-vBWWzlZJ8ea9aCX4pEW3rVHjgjt7zpkNpZk+02D9phzyeVkE+jo0ieGizqPLForn" crossorigin="anonymous"></script>
+	<script src="https://unpkg.com/vue"></script>
+	<script src="{% static "js/marked.min.js" %}"></script>
 	<!--[if lt IE 9]>
       <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
       <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
     <![endif]-->
+	<script>
+		var DEBUG = {{ DEBUG|yesno:"true,false" }};
+		var NAME_OF_SITE_LONG = "{{ NAME_OF_SITE_LONG }}";
+	</script>
 </head>
 
 
 <body>
+<div id="app">
+	<nav class="navbar nav">
 
-</body>
+	</nav>
 	<div class="container">
-	{% block body_main_content %}
-		<h1>{{ NAME_OF_SITE_LONG }}</h1>
-		<p>Hello, world!</p>
-		{% lorem 3 p random %}
-	{% endblock %}
+		{% block body_main_content %}
+			<h1>{{ NAME_OF_SITE_LONG }}</h1>
+			<p>Hello, world!</p>
+			{% lorem 3 p random %}
+		{% endblock %}
+
 	</div>
+</div>
+<script src="{% static "js/site.js" %}"></script>
+{% block body_js %}
+{% endblock %}
+</body>
 </html>
 <!-- S={{ ACTIVE_SETTING }}, D={{ DEBUG }} -->

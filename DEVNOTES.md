@@ -24,5 +24,6 @@ See `requirements.txt`.
 
 ### JavaScript
 
+- [JQuery](https://jquery.com/)
 - [Vue.js](https://vuejs.org): JavaScript Framework
 - [marked](https://github.com/chjj/marked): Markdown to HTML, for the Picture of the Day description
