@@ -10,6 +10,8 @@ _Picture of the day_ site currently supported:
 
 * [Wikipedia (english)](https://en.wikipedia.org/)
 
+See also: `DEVNOTES.md`.
+
 ## Configuration
 
 Create a virtualenv and install the requirements listed in `requirements.txt`. The code has been tested with **Python 3.4** in mind.

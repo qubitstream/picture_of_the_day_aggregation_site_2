@@ -3,6 +3,7 @@ from .models import POTD
 
 
 class POTDSerializer(serializers.ModelSerializer):
+    # TODO: horribly inefficient at the moment because of the neighbour lookups for list views
     full_url = serializers.SerializerMethodField('full_url_field')
     neighbours = serializers.SerializerMethodField('neighbours_field')
 

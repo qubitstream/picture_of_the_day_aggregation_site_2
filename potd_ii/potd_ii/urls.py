@@ -8,7 +8,7 @@ import picture_of_the_day.views
 
 
 router = routers.DefaultRouter()
-router.register(r'potds', picture_of_the_day.views.POTDViewSet)
+router.register(r'potds', picture_of_the_day.views.POTDViewSet, 'potd-view')
 
 urlpatterns = [
     url(r'^$', generic.TemplateView.as_view(template_name='base.html'), name='home'),

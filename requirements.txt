@@ -4,8 +4,10 @@ decorator==4.0.11
 Django==1.11rc1
 django-debug-toolbar==1.7
 django-extensions==1.7.7
+django-filter==1.0.2
 djangorestframework==3.6.2
--e git+https://github.com/SmileyChris/easy-thumbnails.git#egg=easy-thumbnails
+-e git+https://github.com/SmileyChris/easy-thumbnails.git@b3ceb856d9291b190e41d9e397aac5d8a8fc2d52#egg=easy_thumbnails
+html2text==2016.9.19
 ipython==5.3.0
 ipython-genutils==0.2.0
 lxml==3.7.3

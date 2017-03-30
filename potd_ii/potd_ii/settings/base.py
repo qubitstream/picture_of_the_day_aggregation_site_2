@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     'django_extensions',
     'easy_thumbnails',
     'rest_framework',
+    'django_filters',
     'core',
     'picture_of_the_day',
 ]
@@ -148,6 +149,11 @@ CACHES = {
     'default': {
         'BACKEND': 'django.core.cache.backends.dummy.DummyCache',
     }
+}
+
+REST_FRAMEWORK = {
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
+    'PAGE_SIZE': 100
 }
 
 LOGGING = {

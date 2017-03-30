@@ -2,6 +2,19 @@
 
 Miscellaneous development notes.
 
+## REST API
+
+Accessible under `/api/v1/`
+
+## `/api/v1/potds/` query filter parameters:
+* `start_date`, `end_date`: inclusive, format: `yyyy-mm-dd`
+* `before_date`, `after_date`: exclusive, format: `yyyy-mm-dd`
+* `source_type`: see `picture_of_the_day.POTD.PICTURE_SOURCE_CHOICES`
+
+Example URL:
+
+    /api/v1/potds/?min_date=2014-03-26&source_type=wikipedia_en&max_date=2017-03-20
+
 ## Log files created
 
 Files created in the `logs` directory.

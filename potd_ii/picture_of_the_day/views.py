@@ -5,12 +5,11 @@ from django.views.decorators.cache import cache_page
 from django.conf import settings
 from django.template import defaultfilters
 from rest_framework import viewsets
+import django_filters
 from .models import POTD
 from .serializers import POTDSerializer
 import logging
 logger = logging.getLogger(__name__)
-
-
 
 
 @cache_page(settings.CACHE_TIME_POTD_DETAIL)
@@ -27,6 +26,19 @@ def potd_detail(request, year, month, day, source_type=POTD.PICTURE_SOURCE_WIKIP
     })
 
 
+class POTDFilter(django_filters.rest_framework.FilterSet):
+    min_date = django_filters.DateFilter(name='potd_at', lookup_expr='gte')
+    max_date = django_filters.DateFilter(name='potd_at', lookup_expr='lte')
+    before_date = django_filters.DateFilter(name='potd_at', lookup_expr='lt')
+    after_date = django_filters.DateFilter(name='potd_at', lookup_expr='gt')
+
+    class Meta:
+        model = POTD
+        fields = ['source_type', 'min_date', 'max_date', 'before_date', 'after_date']
+
+
 class POTDViewSet(viewsets.ReadOnlyModelViewSet):
-    queryset = POTD.objects.published()
     serializer_class = POTDSerializer
+    filter_backends = (django_filters.rest_framework.DjangoFilterBackend, )
+    filter_class = POTDFilter
+    queryset = POTD.objects.published()
