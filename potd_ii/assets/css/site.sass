@@ -1,0 +1,176 @@
+/* Picture of the Day CSS */
+/* Christoph Haunschmidt */
+// color scheme http://adobe.ly/1pz7bfx
+
+@import "grid"
+
+$col-bg: #0F131C
+$col-main: #E7EFE3
+$col-alt: #E2DDAE
+$col-muted: darken($col-main, 20%)
+
+$col-text: $col-main
+$col-link: lighten($col-text, 10%)
+$col-link-active: lighten($col-text, 30%)
+$col-link-visited: darken($col-text, 10%)
+$col-link-hover: lighten($col-text, 30%)
+
+$typo-margin-top: 0.01em
+$typo-margin-bottom: .8em
+
+$heading-font-family: sans-serif
+$text-font-family: 'Open Sans', sans-serif
+$heading-font-family: 'Montserrat', sans-serif
+
+$image-overlay-bg-col: rgba(0, 0, 0, .85)
+
+$root-box-sizing: border-box
+$img-transition-time: 0.25s
+
+*
+  box-sizing: border-box
+  margin: 0
+  padding: 0
+  font-family: $text-font-family
+  color: $col-text
+
+body
+  background-color: $col-bg
+  height: 100%
+
+a
+  color: $col-link
+  &:hover
+    color: $col-link-hover
+  &:active
+    color: $col-link-active
+  &:visited
+    color: $col-link-visited
+
+h1, h2, h3, h4, h5, h6
+  font-family: $heading-font-family
+
+.container
+  width: 100%
+
+.fullwidth
+  width: 100%
+
+.no-padding-sides
+  padding-left: 0
+  padding-right: 0
+
+.text-center
+  text-align: center
+
+#mainnav
+  width: 100%
+  height: 4em
+  ul
+    list-style-type: none
+    margin: 0
+    padding: 0
+    li
+      display: block
+      float: left
+      a
+        width: 10em
+
+.potd-card
+  position: relative
+  background-color: gray
+  width: 100%
+  padding-top: 100%
+  padding-right: 0
+  padding-left: 0
+  overflow: hidden
+  transition: background-size $img-transition-time ease
+  background:
+    size: 105%
+    position: center
+    repeat: no-repeat
+  > *
+    transition: all $img-transition-time ease-in-out
+  > p
+    position: absolute
+    display: block
+    text-shadow: 0 1px 1px rgba(0, 0, 0, 0.5)
+    background-color: rgba(0, 0, 0, .4)
+    max-width: 90%
+    opacity: 0
+    padding: .5em
+    z-index: 10
+  > p:nth-child(1)
+    left: -3%
+    bottom: .5em
+    font-family: $heading-font-family
+  > p:nth-child(2)
+    font-size: .6em
+    right: 0
+    top: .5em
+  > div
+    position: absolute
+    top: 0
+    bottom: 0
+    left: 0
+    right: 0
+    background-color: rgba(255, 255, 255, .33)
+    opacity: 0
+  &:hover
+    background:
+      size: 101%
+    > p
+      opacity: 1
+    > p:nth-child(1)
+      left: 0
+    > div
+      opacity: 1
+
+.potd-detail
+  > div
+    background-color: rgba(0, 0, 0, .5)
+    max-width: 30em
+    padding: 1em
+    text-shadow: 0 1px 1px rgba(0, 0, 0, 0.5)
+  p
+    padding-top: .5em
+    padding-bottom: .5em
+  h1
+    margin-top: .5em
+  img
+    z-index: -1
+    position: fixed
+    width: 100%
+    top: 0
+    bottom: 0
+    left: 0
+    right: 0
+
+.btn
+  border: 1px solid $col-main
+  border-radius: .4em
+  padding: .2em .6em
+  background-color: $image-overlay-bg-col
+  color: $col-link
+  text-align: center
+  text-decoration: none
+  display: inline-block
+  cursor: pointer
+  &:hover
+    color: $col-bg
+    background-color: $col-link-hover
+
+@media only screen and (min-width: 34em)
+  .potd-card
+    width: 50%
+    padding-top: 50%
+
+@media only screen and (min-width: 54em)
+  .potd-card
+    width: 25%
+    padding-top: 25%
+
+@media only screen and (min-width: 76em)
+  .potd-card
+    width: 16.65%
+    padding-top: 16.65%

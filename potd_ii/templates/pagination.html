@@ -1,0 +1,18 @@
+{% load i18n %}{% load i18n %}
+{% if is_paginated %}
+	<nav>
+		<a class="btn" href="?page=1">|<i class="fa fa-angle-left"></i></a>
+		{% if page_obj.has_previous %}
+			<a class="btn" href="?page={{ page_obj.previous_page_number }}"><i class="fa fa-angle-left"></i></a>
+		{% else %}
+			<span class="btn"><i class="fa fa-angle-left"></i></span>
+		{% endif %}
+		{% trans "Page" %} {{ page_obj.number }} / {{ paginator.num_pages }}
+		{% if page_obj.has_next %}
+			<a class="btn" href="?page={{ page_obj.next_page_number }}"><i class="fa fa-angle-right"></i></a>
+		{% else %}
+			<span class="btn"><i class="fa fa-angle-right"></i></span>
+		{% endif %}
+		<a class="btn" href="?page={{ paginator.num_pages }}"><i class="fa fa-angle-right"></i>|</a>
+	</nav>
+{% endif %}

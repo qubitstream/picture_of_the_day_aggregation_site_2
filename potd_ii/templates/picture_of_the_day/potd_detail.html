@@ -6,7 +6,14 @@
 {% endblock %}
 
 {% block body_main_content %}
-	<div>
-		<potd-detail-controller pk="{{ potd.id }}"></potd-detail-controller>
-	</div>
+	<noscript>
+		<article class="potd-detail">
+			<div>
+				<p>{{ potd.potd_at }} | <a href="{{ potd.detail_url }}" target="blank">{{ potd.source_type }}</a></p><hr>
+				<h1>{{ potd.title }}</h1>
+				<p>{{ potd.description }}</p>
+			</div>
+			<img src="{{ potd.image|thumbnail_url:"potd1200" }}">
+		</article>
+	</noscript>
 {% endblock %}

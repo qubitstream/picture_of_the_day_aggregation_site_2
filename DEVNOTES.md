@@ -33,7 +33,7 @@ See `requirements.txt`.
 
 ### CSS
 
-- [Bootstrap 4](https://v4-alpha.getbootstrap.com/)
+- [Dead Simple Grid](https://v4-alpha.getbootstrap.com/)
 
 ### JavaScript
 

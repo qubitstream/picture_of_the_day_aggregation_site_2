@@ -1,0 +1,33 @@
+{% extends "base.html" %}{% load i18n %}{% load static %}{% load thumbnail %}
+
+{% block head_meta %}
+	<meta name="description" content="{% trans "The latest Pictures of the Day." %}">
+{% endblock %}
+
+{% block head_title %}
+	{% trans "Latest Pictures of the Day" %} -
+	{{ NAME_OF_SITE_LONG }}
+{% endblock %}
+
+{% block body_main_content %}
+	<div class="row no-padding-sides">
+		{% if potds %}
+			<div class="row col no-padding-sides">
+				{% for potd in potds %}
+					<a href="{{ potd.get_absolute_url }}">
+						<div class="col potd-card" style="background-image: url('{{ potd.image|thumbnail_url:"potd400x400" }}')">
+							<p>{{ potd.title }}</p>
+							<p>{{ potd.get_source_type_display }} | {{ potd.potd_at }}</p>
+							<div></div>
+						</div>
+					</a>
+				{% endfor %}
+			</div>
+			<div class="col no-padding-sides">
+				<div class="text-center">{% include "pagination.html" %}</div>
+			</div>
+		{% else %}
+			{% trans "Nothing found." %}
+		{% endif %}
+	</div>
+{% endblock %}

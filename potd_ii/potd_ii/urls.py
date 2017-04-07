@@ -11,7 +11,7 @@ router = routers.DefaultRouter()
 router.register(r'potds', picture_of_the_day.views.POTDViewSet, 'potd-view')
 
 urlpatterns = [
-    url(r'^$', generic.TemplateView.as_view(template_name='base.html'), name='home'),
+    url(r'^$', picture_of_the_day.views.POTDListView.as_view(), name='potd.picture_of_the_day.list'),
     url(r'^(?P<year>\d{4,})/(?P<month>\d+)/(?P<day>\d+)/(?P<source_type>[a-zA-Z_\-]+)/(?P<slug>.*)/$',
         picture_of_the_day.views.potd_detail, name='potd.picture_of_the_day.detail'),
     url(r'^api/v1/', include(router.urls)),
