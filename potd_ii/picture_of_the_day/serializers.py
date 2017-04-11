@@ -11,5 +11,5 @@ class POTDSerializer(serializers.ModelSerializer):
     class Meta:
         model = POTD
         fields = ('id,source_type,potd_at,source_url,detail_url,title,description,full_url,'
-            'image,width,height,aspect_ratio,thumbnail_full_urls').split(',')
+            'image,width,height,aspect_ratio,thumbnail_full_urls,copyright_info').split(',')
 

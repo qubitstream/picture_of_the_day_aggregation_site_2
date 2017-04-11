@@ -42,14 +42,21 @@ function toggleFullScreen() {
 Vue.component('potd-detail', {
 		props: ['potd'],
 		template: '<article v-if="potd" class="potd-detail"><div><p>{{ potd.potd_at }} | ' +
-		'<a v-bind:href="potd.detail_url" target="blank">{{ potd.source_type }}</a></p><hr><h1>{{ potd.title }}</h1>' +
+		'<a v-bind:href="infoURL" target="blank">{{ potd.source_type }}</a></p><hr><h1>{{ potd.title }}</h1>' +
 		'<p v-html="markedDescription"></p>' +
+		'<p v-if="potd.copyright_info" v-html="markedCopyrightInfo"></p>' +
 		'<img v-if="potd.image" v-bind:src="potd.thumbnail_full_urls.potd1200" v-bind:title="imgTitle" v-bind:alt="potd.title"></div>' +
 		'<img v-if="!potd.image" src="' + STATIC_URL + 'img/placeholder.jpg" title="No image available" alt="No image available">' +
 		'</article>',
 		computed: {
 			markedDescription: function () {
 				return this.potd ? marked(this.potd.description) : ''
+			},
+			markedCopyrightInfo: function () {
+				return (this.potd && this.potd.copyright_info) ? marked(this.potd.copyright_info) : ''
+			},
+			infoURL: function() {
+				return this.potd ? (this.potd.detail_url ? this.potd.detail_url : this.potd.source_url) : ''
 			},
 			imgTitle: function () {
 				return this.potd ? (this.potd.title + "\n" + this.potd.description) : ''
@@ -197,10 +204,10 @@ new Vue({
 		$(document).keydown(function (e) {
 			switch (e.which) {
 				case KC.LEFT:
-					vm.gotoEarlierPotd();
+					vm.gotoLaterPotd();
 					break;
 				case KC.RIGHT:
-					vm.gotoLaterPotd();
+					vm.gotoEarlierPotd();
 					break;
 				case KC.DOWN:
 					vm.toggleFullScreen();
@@ -210,6 +217,5 @@ new Vue({
 			}
 			e.preventDefault();
 		});
-		// this.loadPotdData();
 	},
 });

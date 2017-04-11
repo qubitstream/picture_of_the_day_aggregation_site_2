@@ -6,9 +6,10 @@ Picture of the Day
 
 This is the source code for an aggregation site for various "Picture of the day" sites, written in [Django](https://www.djangoproject.com/).
 
-_Picture of the day_ site currently supported:
+_Picture of the day_ sites currently supported:
 
 * [Wikipedia (english)](https://en.wikipedia.org/)
+* [NASA Astronomy Picture of the Day (English)](https://apod.nasa.gov/)
 
 See also: `DEVNOTES.md`.
 

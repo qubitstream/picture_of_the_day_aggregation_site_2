@@ -50,9 +50,11 @@ class POTDQuerySet(models.QuerySet):
 class POTD(models.Model):
     PICTURE_SOURCE_UNSPECIFIED = 'unspecified'
     PICTURE_SOURCE_WIKIPEDIA_EN = 'wikipedia_en'
+    PICTURE_SOURCE_NASA_APOD_EN = 'nasa_apod_en'
     PICTURE_SOURCE_CHOICES = (
         (PICTURE_SOURCE_UNSPECIFIED, _('Unspecified source')),
         (PICTURE_SOURCE_WIKIPEDIA_EN, _('Wikipedia (English)')),
+        (PICTURE_SOURCE_NASA_APOD_EN, _('NASA Astronomy Picture of the Day (English)')),
     )
 
     title = models.CharField(
@@ -126,6 +128,11 @@ class POTD(models.Model):
 
     description = models.TextField(
         verbose_name=_('description of the picture'),
+    )
+
+    copyright_info = models.TextField(
+        verbose_name=_('copyright information'),
+        blank=True,
     )
 
     width = models.PositiveIntegerField(

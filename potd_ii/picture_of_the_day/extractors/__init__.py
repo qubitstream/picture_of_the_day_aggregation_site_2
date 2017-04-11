@@ -26,7 +26,7 @@ def download_image(potd, redownload=False):
     if potd.image and not redownload:
         logger.info('skipping re-downloading of image for {}'.format(potd))
         return False
-    if not potd.image_url:
+    if not potd.image_url and not potd.image_thumbnail_url:
         logger.warning('no image URL for {}'.format(potd))
         return False
     if not potd.pk:
@@ -81,9 +81,10 @@ def extract_range(start_year=None, start_month=None, start_day=None,
             if source_type != POTD.PICTURE_SOURCE_UNSPECIFIED
         ]
 
-    from . import wikipedia_en
+    from . import wikipedia_en, nasa_apod_en
     extractors = {
         POTD.PICTURE_SOURCE_WIKIPEDIA_EN: wikipedia_en.WikipediaEnExtractor(),
+        POTD.PICTURE_SOURCE_NASA_APOD_EN: nasa_apod_en.NASAAPODEnExtractor(),
     }
 
     days_processed, potds_extracted, images_downloaded = 0, 0, 0

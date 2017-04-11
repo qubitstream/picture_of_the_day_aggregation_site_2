@@ -6,8 +6,11 @@ from .models import POTD
 
 class PTDAdmin(admin.ModelAdmin):
     def image_format(self, obj):
-        return '{0.width}x{0.height}px (aspect {0.aspect_ratio}), size {1}'.format(
-            obj, filesizeformat(obj.image.size))
+        if obj.image:
+            return '{0.width}x{0.height}px (aspect {0.aspect_ratio}), size {1}'.format(
+                obj, filesizeformat(obj.image.size))
+        else:
+            return 'N/A'
 
     image_format.short_description = _('image details')
     list_display = 'source_type,potd_at,is_published,title,image_format'.split(',')
