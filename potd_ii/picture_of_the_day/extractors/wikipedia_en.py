@@ -5,10 +5,11 @@ from datetime import date
 from lxml import html
 from lxml.etree import tostring
 from django.utils.timezone import now
+from django.conf import settings
 from html2text import HTML2Text
 from . import BaseExtractor
 from ..models import POTD
-logger = logging.getLogger('management')
+logger = logging.getLogger('management.' + __name__)
 
 
 class WikipediaEnExtractor(BaseExtractor):
@@ -25,7 +26,7 @@ class WikipediaEnExtractor(BaseExtractor):
         super().__init__()
         self.source_type = POTD.PICTURE_SOURCE_WIKIPEDIA_EN
 
-    def extract(self, year, month, day, update_existing=False, max_thumb_size=None):
+    def extract(self, year, month, day, update_existing=False, max_thumb_size=None, use_cached=False):
         max_thumb_size = max_thumb_size or self.max_thumb_size
         potd_kwargs = {'potd_at': date(year=year, month=month, day=day), 'source_type': self.source_type}
         try:
@@ -46,6 +47,9 @@ class WikipediaEnExtractor(BaseExtractor):
         if response.ok:
             tree = html.fromstring(response.content)
             image_filename = tree.xpath('//div[@id="mw-content-text"][1]/table//img[1]/..')[0].attrib['href'].split(':')[1]
+            if not image_filename.lower().endswith(settings.ALLOWED_IMAGE_EXTENSIONS):
+                logger.info('extractor wikipedia_en: not a matching potd type: {}'.format(_image_filename))
+                return
             potd.title = tree.xpath('//div[@id="mw-content-text"][1]/table//tr/td/p//b/a')[0].attrib['title']
             potd.detail_url = WikipediaEnExtractor.WIKIPEDIA_BASE_URL + tree.xpath('//div[@id="mw-content-text"][1]/table//tr/td/p//b/a')[0].attrib['href']
             potd.source_url = WikipediaEnExtractor.WIKIMEDIA_COMMONS_URL.format(image_filename=image_filename)
@@ -61,15 +65,22 @@ class WikipediaEnExtractor(BaseExtractor):
         if max_thumb_size:
             source_image_api_url += r'&thumbwidth={0}&thumbheight={0}'.format(max_thumb_size)
         logger.debug('extractor wikipedia_en: source image api url: {}'.format(source_image_api_url))
-        response = requests.get(source_image_api_url)
+
+        if use_cached and potd.raw_scaping_data_binary_compressed:
+            response = self._FakeResponse(potd.raw_scaping_data_binary_uncompressed)
+            logger.debug('extractor wikipedia_en: using cached markup')
+        else:
+            response = requests.get(source_image_api_url)
+            potd.raw_scaping_data_binary_compressed = self._compress(response.content)
 
         if response.ok:
             tree = html.fromstring(response.content)
-            potd.raw_scraping_data_image = tostring(tree, encoding='unicode', pretty_print=True)
             potd.image_url = tree.xpath('//urls/file')[0].text
             potd.image_thumbnail_url = None
             try:
-                potd.image_thumbnail_url = tree.xpath('//urls/thumbnail')[0].text
+                image_thumbnail_url = tree.xpath('//urls/thumbnail')[0].text
+                if image_filename.lower().endswith(settings.ALLOWED_IMAGE_EXTENSIONS):
+                    potd.image_thumbnail_url = image_thumbnail_url
             except (KeyError, IndexError):
                 logger.debug('extractor wikipedia_en: image thumbnail url not found: {}'.format(
                     source_image_api_url))

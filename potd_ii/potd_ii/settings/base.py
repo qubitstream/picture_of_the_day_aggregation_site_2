@@ -228,6 +228,8 @@ POTD_AT_START = datetime.date(2004, 5, 14)
 CACHE_TIME_POTD_LIST = 60 * 60
 CACHE_TIME_POTD_DETAIL = 60 * 60
 
+ALLOWED_IMAGE_EXTENSIONS = tuple('.jpg,.jpeg,.gif,.png,.svg'.lower().split(','))
+
 THUMBNAIL_ALIASES = {
     '': {
         'potd2000': {'size': (2000, 2000), 'upscale': False},

@@ -1,4 +1,5 @@
 import os
+import lzma
 from fractions import Fraction
 from unidecode import unidecode
 from django.db import models
@@ -8,6 +9,7 @@ from django.utils.text import slugify
 from django.conf import settings
 from easy_thumbnails.templatetags.thumbnail import thumbnail_url
 import logging
+
 logger = logging.getLogger(__name__)
 
 
@@ -15,7 +17,7 @@ def image_upload_path(instance, filename):
     _, ext = os.path.splitext(filename.lower())
     basename = slugify(unidecode(instance.title)[:40], allow_unicode=False)
     upload_to = ('potds/{0.year:0>4}/{0.month:0>2}/{0.day:0>2}/'
-        '{1}__{0.year:0>4}-{0.month:0>2}-{0.day:0>2}__{2}{3}').format(
+                 '{1}__{0.year:0>4}-{0.month:0>2}-{0.day:0>2}__{2}{3}').format(
         instance.potd_at, instance.source_type, basename, ext
     )
     return upload_to
@@ -114,7 +116,7 @@ class POTD(models.Model):
 
     image_url = models.URLField(
         verbose_name=_('image url'),
-        help_text=_('URL for the direct link to the image'),
+        help_text=_('URL for the direct link to the image, for the highest res available'),
         editable=False,
         blank=True,
     )
@@ -128,10 +130,12 @@ class POTD(models.Model):
 
     description = models.TextField(
         verbose_name=_('description of the picture'),
+        help_text=_('Markdown is allowed'),
     )
 
     copyright_info = models.TextField(
         verbose_name=_('copyright information'),
+        help_text=_('Markdown is allowed'),
         blank=True,
     )
 
@@ -155,15 +159,35 @@ class POTD(models.Model):
         verbose_name=_('picture of the day image file')
     )
 
-    raw_scraping_data_image = models.TextField(
+    # this field for avoiding parsing the source sites again and again. especially during testing
+    # yes, storing binary in the db is bad - this data can be stored in files if the need arises
+    raw_scaping_data_binary_compressed = models.BinaryField(
         blank=True,
-        verbose_name=_('raw scraping data for image'),
+        verbose_name=_('lzma compressed raw scraping data for image'),
         editable=False
     )
 
     @property
     def aspect_ratio(self):
-        return '{0.numerator}/{0.denominator}'.format(Fraction(self.width, self.height)) if self.height else _('N/A')
+        return '{0.numerator}/{0.denominator}'.format(Fraction(self.width, self.height)) if self.image else _('N/A')
+
+    @property
+    def raw_scaping_data_binary_uncompressed(self):
+        retval = b''
+        if self.raw_scaping_data_binary_compressed:
+            try:
+                retval = lzma.decompress(self.raw_scaping_data_binary_compressed)
+            except Exception as e:
+                logger.debug('error decompressing raw_scraping_data_binary for {}: {}'.format(self, e))
+        return retval
+
+    @property
+    def raw_scraping_data_binary_string(self):
+        try:
+            return self.raw_scaping_data_binary_uncompressed.decode('utf8')
+        except:
+            pass
+        return ' - ' + _('Error decompressing') + ' _ '
 
     def thumbnail_full_url(self, thumb_preset='potd400x400'):
         return settings.SITE_DOMAIN + thumbnail_url(self.image, thumb_preset)
@@ -198,10 +222,11 @@ class POTD(models.Model):
 
     def __repr__(self):
         return 'pk={0.pk} potd_at={0.potd_at} source_type={0.source_type} title={0.title} | url={1}'.format(self,
-            self.get_absolute_url())
+                                                                                                            self.get_absolute_url())
 
     class Meta:
-        ordering = ['-potd_at']
+        ordering = ['-potd_at', 'source_type']
+        get_latest_by = 'potd_at'
         verbose_name = _('picture of the day')
         verbose_name_plural = _('pictures of the day')
         unique_together = ('potd_at', 'source_type')

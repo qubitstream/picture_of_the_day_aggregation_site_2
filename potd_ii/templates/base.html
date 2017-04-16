@@ -33,6 +33,7 @@ git revision: $GIT_REVISION
 		var NAME_OF_SITE_LONG = "{{ NAME_OF_SITE_LONG }}";
 		var STATIC_URL = "{% static "" %}";
 		var initialData = {{ initial_data_json | default:"null" | safe }};
+		var TRANS = {{ TRANS | default:"{}" | safe }};
 	</script>
 </head>
 
@@ -41,9 +42,10 @@ git revision: $GIT_REVISION
 <div id="app">
 	<nav id="mainnav">
 		<ul>
-			<li><a class="btn" v-on:click="toggleFullScreen"><i class="fa fa-expand"></i>&nbsp;{% trans "Fullscreen" %}</a></li>
+			<li><a class="btn" href="/"><i class="fa fa-list"></i>&nbsp;{% trans "Overview" %}</a></li>
 			<li><a class="btn" v-on:click="gotoLaterPotd"><i class="fa fa-arrow-circle-left"></i>&nbsp;{% trans "Newer" %}</a></li>
 			<li><a class="btn" v-on:click="gotoEarlierPotd">{% trans "Older" %}&nbsp;<i class="fa fa-arrow-circle-right"></i></a></li>
+			<li><a class="btn" v-on:click="toggleFullScreen"><i class="fa fa-expand"></i>&nbsp;{% trans "Fullscreen" %}</a></li>
 		</ul>
 	</nav>
 	<div class="container">

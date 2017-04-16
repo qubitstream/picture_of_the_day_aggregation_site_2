@@ -18,6 +18,13 @@ function dlog(msg) {
 	}
 }
 
+function trans(what) {
+	if (window.TRANS && window.TRANS.hasOwnProperty(what)) {
+		return window.TRANS[what]
+	}
+	return what
+}
+
 function toggleFullScreen() {
 	if ((document.fullScreenElement && document.fullScreenElement !== null) ||
 		(!document.mozFullScreen && !document.webkitIsFullScreen)) {
@@ -41,27 +48,33 @@ function toggleFullScreen() {
 
 Vue.component('potd-detail', {
 		props: ['potd'],
-		template: '<article v-if="potd" class="potd-detail"><div><p>{{ potd.potd_at }} | ' +
-		'<a v-bind:href="infoURL" target="blank">{{ potd.source_type }}</a></p><hr><h1>{{ potd.title }}</h1>' +
-		'<p v-html="markedDescription"></p>' +
-		'<p v-if="potd.copyright_info" v-html="markedCopyrightInfo"></p>' +
-		'<img v-if="potd.image" v-bind:src="potd.thumbnail_full_urls.potd1200" v-bind:title="imgTitle" v-bind:alt="potd.title"></div>' +
+		template: '<article v-if="potd" class="potd-detail"><div>' +
+		'<div class="header"><h1>{{ potd.title }}</h1>&nbsp; | {{ potd.potd_at }} | ' +
+		'<a v-bind:href="infoURL" target="blank">{{ sourceTypeLong }}</a></div>' +
+		'<p v-html="markedDescription" class="description"></p>' +
+		'<p v-if="potd.copyright_info" class="credits">Credits: <span v-html="markedCopyrightInfo"></span></p>' +
+		'<img v-if="potd.image" v-bind:src="potd.thumbnail_full_urls.potd1200" v-bind:alt="potd.title"></div>' +
 		'<img v-if="!potd.image" src="' + STATIC_URL + 'img/placeholder.jpg" title="No image available" alt="No image available">' +
 		'</article>',
 		computed: {
 			markedDescription: function () {
-				return this.potd ? marked(this.potd.description) : ''
+				return this.potd ? this._removeP(marked(this.potd.description)) : ''
 			},
 			markedCopyrightInfo: function () {
-				return (this.potd && this.potd.copyright_info) ? marked(this.potd.copyright_info) : ''
+				return (this.potd && this.potd.copyright_info) ? this._removeP(marked(this.potd.copyright_info)) : ''
 			},
-			infoURL: function() {
+			infoURL: function () {
 				return this.potd ? (this.potd.detail_url ? this.potd.detail_url : this.potd.source_url) : ''
 			},
-			imgTitle: function () {
-				return this.potd ? (this.potd.title + "\n" + this.potd.description) : ''
-			},
+			sourceTypeLong: function () {
+				return trans(this.potd.source_type)
+			}
 		},
+		methods: {
+			_removeP: function (html) {
+				return html.replace(/^\s*<p>\s*|\s*<\/p>\s*$/gm, '')
+			}
+		}
 	}
 );
 
@@ -78,6 +91,7 @@ new Vue({
 			earliestLoaded: false,
 			latestLoaded: false,
 			sortedPotds: [],
+			initialize: true,
 		}
 	},
 	methods: {
@@ -132,7 +146,12 @@ new Vue({
 		loadPotdData: function (direction) {
 			var vm = this, params = [];
 			if (direction === -1) {
-				params.push('before_date=' + this.activeDate)
+				if (this.initialize) {
+					params.push('max_date=' + this.activeDate)
+				} else {
+					params.push('before_date=' + this.activeDate);
+					this.initialize = false;
+				}
 			} else {
 				params.push('after_date=' + this.activeDate)
 			}
@@ -180,12 +199,13 @@ new Vue({
 	},
 	watch: {
 		activePotd: function () {
+			var threshold = 0;
 			var aidx = this.activePotdIndex,
 				amaxindx = this.sortedPotds.length - 1;
-			if (aidx === 0 && !this.earliestLoaded) {
+			if (aidx <= threshold && !this.earliestLoaded) {
 				this.loadPotdData(-1)
 			}
-			if (aidx === amaxindx && !this.latestLoaded) {
+			if (aidx >= (amaxindx - threshold)  && !this.latestLoaded) {
 				this.loadPotdData(1)
 			}
 		},

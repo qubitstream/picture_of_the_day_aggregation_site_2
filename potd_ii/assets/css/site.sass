@@ -127,16 +127,36 @@ h1, h2, h3, h4, h5, h6
       opacity: 1
 
 .potd-detail
+  position: absolute
+  width: 100%
+  bottom: 0
+  max-height: 80%
+  overflow-y: auto
   > div
     background-color: rgba(0, 0, 0, .5)
-    max-width: 30em
-    padding: 1em
+    // max-width: 50em
+    padding: 1em 1em 0 1em
     text-shadow: 0 1px 1px rgba(0, 0, 0, 0.5)
   p
     padding-top: .5em
     padding-bottom: .5em
-  h1
-    margin-top: .5em
+  .header
+    text-align: center
+    color: $col-muted
+    h1
+      display: inline-block
+      margin-top: 0
+      margin-bottom: .5em
+  .credits
+    border-top: 1px dotted $col-text
+    font-size: .7em
+    text-align: center
+  .description
+    border-top: 1px dotted $col-text
+    column-width: 30em
+    column-rule-color: transparentize($col-text, .8)
+    column-rule-width: 1px
+    column-rule-style: dotted
   img
     z-index: -1
     position: fixed

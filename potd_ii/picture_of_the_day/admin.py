@@ -14,6 +14,21 @@ class PTDAdmin(admin.ModelAdmin):
 
     image_format.short_description = _('image details')
     list_display = 'source_type,potd_at,is_published,title,image_format'.split(',')
-    readonly_fields = ('slug', 'width', 'height', 'raw_scraping_data_image')
+    readonly_fields = ('slug', 'width', 'height')
+    fieldsets = (
+        (None, {
+            'fields': ('source_type', 'potd_at', 'is_published', 'title', 'slug', 'description',
+                       'copyright_info', 'image', 'source_url', 'detail_url',
+                       'image_url', 'image_thumbnail_url', 'retrieved_from_source_at'),
+        }),
+        ('Metadata', {
+            'classes': ('collapse',),
+            'fields': ('width', 'height', 'raw_scraping_data_binary_string')
+        }),
+    )
+    readonly_fields = ('source_url', 'detail_url', 'width', 'height',
+                       'retrieved_from_source_at', 'image_url', 'image_thumbnail_url',
+                       'updated_at', 'slug', 'potd_at', 'raw_scraping_data_binary_string')
+
 
 admin.site.register(POTD, PTDAdmin)

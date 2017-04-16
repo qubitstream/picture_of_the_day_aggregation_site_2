@@ -17,7 +17,7 @@ logger = logging.getLogger(__name__)
 
 
 class POTDListView(generic.ListView):
-    paginate_by = 6
+    paginate_by = 24
     context_object_name = 'potds'
     template_name = 'potd_list.html'
     queryset = POTD.objects.published()
